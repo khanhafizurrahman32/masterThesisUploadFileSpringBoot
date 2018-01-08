@@ -1,9 +1,11 @@
 package io.hafiz.masterThesis.uploadFile.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -40,9 +42,16 @@ public class FileUploadServiceImpl implements FileUploadServiceInterface {
 	}
 
 	@Override
-	public List<FileDescription> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<FileDescription> findAll() {
+		File folder = new File ("/Users/khanhafizurrahman/Desktop/Thesis/code/Thesis_Implementation/UploadFiles");
+		File[] listOfFiles = folder.listFiles();
+		ArrayList<FileDescription>  ListOfFilesInDirectory = new ArrayList <FileDescription> ();
+		for (int i= 0; i < listOfFiles.length; i++) {
+			System.out.println(listOfFiles[i].getName());
+			FileDescription detailsOfFile = new FileDescription((long) i,listOfFiles[i].getName());
+			ListOfFilesInDirectory.add(detailsOfFile);
+		}
+		return ListOfFilesInDirectory;
 	}
 	
 }

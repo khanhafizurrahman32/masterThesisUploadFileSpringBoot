@@ -35,15 +35,7 @@ public class FileUploadController {
 	@CrossOrigin(origins = "http://localhost:3000")
 	@RequestMapping("/readAllFiles")
 	public ArrayList<FileDescription> getAllFiles() {
-		File folder = new File ("/Users/khanhafizurrahman/Desktop/Thesis/code/Thesis_Implementation/UploadFiles");
-		File[] listOfFiles = folder.listFiles();
-		ArrayList<FileDescription>  ListOfFilesInDirectory = new ArrayList <FileDescription> ();
-		for (int i= 0; i < listOfFiles.length; i++) {
-			System.out.println(listOfFiles[i].getName());
-			FileDescription detailsOfFile = new FileDescription((long) i,listOfFiles[i].getName());
-			ListOfFilesInDirectory.add(detailsOfFile);
-		}
-		return ListOfFilesInDirectory;
+		return fileUploadService.findAll();
 	}
 	@CrossOrigin
 	@RequestMapping(value = "/toaFixedPlace", method = RequestMethod.POST )
