@@ -33,9 +33,7 @@ public class FileUploadServiceImpl implements FileUploadServiceInterface {
 
 	private void saveUploadedFiles(MultipartFile multipartFile) throws IOException{
 		byte[] bytes = multipartFile.getBytes();
-		System.out.println(multipartFile.getOriginalFilename());
 		Path path = Paths.get(UPLOADED_FOLDER + multipartFile.getOriginalFilename());
-		System.out.println(path);
 		Files.write(path, bytes);
 		
 		

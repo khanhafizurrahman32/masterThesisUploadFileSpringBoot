@@ -9,6 +9,24 @@ import javax.persistence.Lob;
 
 @Entity
 public class FileDescription {
+	
+	public FileDescription() {
+		
+	}
+// need not to be here	
+	public FileDescription(Long id, String fileName) {
+		super();
+		this.id = id;
+		this.fileName = fileName;
+	}
+	
+	public FileDescription(Long id, String fileName, byte[] file) {
+		super();
+		this.id = id;
+		this.fileName = fileName;
+		this.file = file;
+	}
+	
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
