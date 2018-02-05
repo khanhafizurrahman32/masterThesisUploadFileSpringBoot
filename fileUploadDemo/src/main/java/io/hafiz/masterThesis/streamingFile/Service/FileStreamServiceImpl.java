@@ -58,7 +58,8 @@ public class FileStreamServiceImpl implements FileStreamingServiceInterface {
 			inputList = br.lines().skip(0).map(line -> line.split(",")).collect(Collectors.toList());
 			
 			br.close();
-			HashMap<String,String> headerNSampleTuple = mappingHeaderValuePair(headerArray,inputList);
+//			HashMap<String,String> headerNSampleTuple = mappingHeaderValuePair(headerArray,inputList);
+			List<String> headerNSampleTuple = mappingHeaderValuePair(headerArray,inputList);
 			submitToKafkaTopic(headerNSampleTuple);
 			//receivingContentsFromTopic();
 			
@@ -69,16 +70,19 @@ public class FileStreamServiceImpl implements FileStreamingServiceInterface {
 	
 	
 
-	private HashMap<String,String> mappingHeaderValuePair(String[] headerArray, List<String[]> inputList) {
+//	private HashMap<String,String> mappingHeaderValuePair(String[] headerArray, List<String[]> inputList) {
+	private List<String> mappingHeaderValuePair(String[] headerArray, List<String[]> inputList) {
 	
-		HashMap<String,String> headerRowValueTuple = new HashMap<String,String>();
+//		HashMap<String,String> headerRowValueTuple = new HashMap<String,String>();
+		
+		List<String> mappedValuePair = new ArrayList<String>();
 		for (String[] currentRow : inputList) {
 			for(int headerCount = 0; headerCount < headerArray.length; headerCount++) {
 				System.out.println(currentRow[headerCount]);
-				headerRowValueTuple.put(headerArray[headerCount],currentRow[headerCount]);
+				mappedValuePair.add(headerArray[headerCount] +" , " + currentRow[headerCount]);
 			}	
 		}
-		return headerRowValueTuple;
+		return mappedValuePair;
 	}
 
 	
@@ -117,7 +121,8 @@ public class FileStreamServiceImpl implements FileStreamingServiceInterface {
         	
 	}
 
-	private void submitToKafkaTopic(HashMap<String,String> headerNSampleTuple) {
+//	private void submitToKafkaTopic(HashMap<String,String> headerNSampleTuple) {
+	private void submitToKafkaTopic(List<String> headerNSampleTuple) {
 		String topicName = "sampleFileTopic";
 		Properties props = new Properties();
 		props.put("bootstrap.servers", "localhost:9092");
@@ -131,8 +136,8 @@ public class FileStreamServiceImpl implements FileStreamingServiceInterface {
 		
 //		Producer<String,sampleFileToHandle> producer = new KafkaProducer<String,sampleFileToHandle>(props);
 		Producer<String, String> producer = new KafkaProducer<String,String>(props);
-		for(Map.Entry<String, String> m: headerNSampleTuple.entrySet()) {
-			producer.send(new ProducerRecord<String, String>(topicName,(m.getKey() +":::"+m.getValue())));
+		for(String s: headerNSampleTuple) {
+			producer.send(new ProducerRecord<String, String>(topicName,s));
 		}
 		System.out.println("Message sent successfully");
 		producer.close();
