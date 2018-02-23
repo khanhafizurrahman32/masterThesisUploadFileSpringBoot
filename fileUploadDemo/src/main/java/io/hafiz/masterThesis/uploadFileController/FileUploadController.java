@@ -1,4 +1,4 @@
-package io.hafiz.masterThesis.uploadFile;
+package io.hafiz.masterThesis.uploadFileController;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -23,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import io.hafiz.masterThesis.fileManipulation.FileWatcher;
 import io.hafiz.masterThesis.streamingFile.Service.FileStreamingServiceInterface;
 import io.hafiz.masterThesis.uploadFile.Service.FileDescription;
 import io.hafiz.masterThesis.uploadFile.Service.FileUploadServiceInterface;
@@ -94,5 +97,19 @@ public class FileUploadController {
 			// TODO: handle exception
 		}
 		return headerNames;
-	}			
+	}
+	
+	@RequestMapping("/fileWatch")
+	public void checkFileMoldifiedOrnot(@RequestParam(value="checkFilePath") String filePath) {
+		TimerTask task = new FileWatcher(new File(filePath)) {
+			
+			@Override
+			protected void onChange(File file) {
+				System.out.println("File " + file.getName() + "have changes !");
+			}
+		};
+		
+		Timer timer = new Timer ();
+		timer.schedule(task, new Date(), 1000);
+	}
 }

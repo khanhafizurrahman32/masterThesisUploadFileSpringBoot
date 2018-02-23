@@ -48,6 +48,7 @@ public class FileStreamServiceImpl implements FileStreamingServiceInterface {
 	@Override
 	public void startProcessingFileToSubmitIntoTopic(String filePath) {
 		//List<sampleFileToHandle> inputList = new ArrayList<sampleFileToHandle>();
+		System.out.println("line 51");
 		List<String[]> inputList = new ArrayList<String[]>();
 		List<String> headerNames = new ArrayList<String>();
 		String [] headerArray;
@@ -87,12 +88,13 @@ public class FileStreamServiceImpl implements FileStreamingServiceInterface {
 		final Consumer<String, String> consumer = createConsumer();
 		while(true) {
 			ConsumerRecords<String,String> records = consumer.poll(100);
-			Iterator<ConsumerRecord<String,String>> iterable = records.iterator();
-			System.out.println(iterable.hasNext());
-			while(iterable.hasNext()) {
-				ConsumerRecord<String,String> currentRecord = iterable.next();
-				System.out.println("Key is "+ currentRecord.key()+ " value is "+ currentRecord.value() + " offset is "+ currentRecord.offset()+ "partition is " + currentRecord.partition());
-			}
+			System.out.println(records.count());
+//			Iterator<ConsumerRecord<String,String>> iterable = records.iterator();
+//			System.out.println(iterable.hasNext());
+//			while(iterable.hasNext()) {
+//				ConsumerRecord<String,String> currentRecord = iterable.next();
+//				System.out.println("Key is "+ currentRecord.key()+ " value is "+ currentRecord.value() + " offset is "+ currentRecord.offset()+ "partition is " + currentRecord.partition());
+//			}
 		}
 	}
 
