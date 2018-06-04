@@ -10,12 +10,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -47,7 +51,7 @@ public class FileUploadController {
 		this.fileStreamService = fileStreamService;
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin
 	@RequestMapping("/readAllFiles")
 	public ArrayList<FileDescription> getAllFiles() {
 		return fileUploadService.findAll();
@@ -58,19 +62,10 @@ public class FileUploadController {
 		return fileUploadService.save(multipartFile);
 	}
 	
+	@CrossOrigin
 	@RequestMapping("/startProcessingFile")
-	public void processFile(@RequestParam(value="inputFilePath", defaultValue="Please specify a fixed location")String inputFilePath) {
-		//LOG.log(Level.INFO, "File path " + inputFilePath);
-		try {
-			File inputF = new File(inputFilePath);
-			InputStream inputFS = new FileInputStream(inputF);
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputFS));
-			
-			System.out.println(br.readLine());
-			br.close();
-		}catch(Exception ex) {
-			System.out.println(ex.toString());
-		}
+	public List<String> processFile(@RequestParam(value="inputFilePath") String inputFilePath) {
+		return fileUploadService.contentsInJson(inputFilePath);
 	}
 	
 	@RequestMapping("/processSampleFile")
@@ -79,24 +74,34 @@ public class FileUploadController {
 		fileStreamService.startProcessingFileToSubmitIntoTopic(sampleFilePath);
 	}
 	
+	@CrossOrigin
+	@RequestMapping("/startKafkaCommandShell")
+	public void commandKafkaShellStart(@RequestParam(value="topicName", defaultValue="Please specify a topicName") String topicName) {
+		System.out.println(topicName);
+		fileUploadService.startKafkaTerminalCommandsFromJava(topicName);
+	}
 	
+	@CrossOrigin
+	@RequestMapping("/startPythonCommandShell")
+	public void commandSparkCreate(@RequestParam Map<String, String> parameters) {
+		fileUploadService.submitPysparkProjectTerminalCommand(parameters);
+	}
+	
+	
+	@CrossOrigin
+	@RequestMapping("/sendDatatoKafka")
+	public void sendData(@RequestParam Map<String, String> parameters) {
+		
+		System.out.println(parameters.get("kafka_broker_end_point"));
+		System.out.println(parameters.get("csv_input_file"));
+		System.out.println(parameters.get("topic_name"));
+		fileUploadService.sendDataToKafkaTopic(parameters);
+	}
+	
+	@CrossOrigin
 	@RequestMapping("/getHeadersOfaFile")
-	public List<String> getHeadersList(@RequestParam(value="inputFilePath") String inputFilePath) {
-		List<String> headerNames = new ArrayList<String>();
-		try {
-			File inputF = new File(inputFilePath);
-			InputStream inputFS = new FileInputStream(inputF);
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputFS));
-			
-			headerNames = Stream.of(br.readLine()).map(line -> line.split(","))
-								.flatMap(Arrays:: stream).collect(Collectors.toList());
-			
-			//headerNames.forEach(System.out::println);
-	
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return headerNames;
+	public String getHeadersList(@RequestParam(value="inputFilePath") String inputFilePath) {
+		return fileUploadService.getHeadersName(inputFilePath);
 	}
 	
 	@RequestMapping("/fileWatch")

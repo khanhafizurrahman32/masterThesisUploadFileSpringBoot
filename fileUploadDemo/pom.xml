@@ -57,11 +57,24 @@
 		    <version>1.0.0</version>
 		</dependency>
 		
+		
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.7.4</version>
 			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+    			<groupId>javax.json</groupId>
+    			<artifactId>javax.json-api</artifactId>
+    			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			 <groupId>com.corundumstudio.socketio</groupId>
+			 <artifactId>netty-socketio</artifactId>
+			 <version>1.7.12</version>
 		</dependency>
 		
 	</dependencies>
